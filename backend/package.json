@@ -1,0 +1,14 @@
+{
+  "name": "secureverse-contracts",
+  "version": "1.0.0",
+  "description": "SecureVerse Solidity contracts — Hardhat project",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy":  "hardhat run scripts/deploy.js --network sepolia",
+    "test":    "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  }
+}
