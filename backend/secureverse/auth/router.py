@@ -56,7 +56,7 @@ async def register(body: RegisterRequest, session=Depends(get_session), redis=De
     try:
         await register_did(body.did, body.public_key_hex, body.wallet_address, body.private_key_hex)
     except Exception as e:
-        raise HTTPException(502, f"Blockchain error: {e}")
+        pass  # blockchain optional
     totp_secret = generate_totp_secret()
     session.add(User(did=body.did, totp_secret=totp_secret, role="user"))
     await session.commit()
