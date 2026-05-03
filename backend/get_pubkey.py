@@ -1,24 +1,30 @@
-# Run this once to get your public key from MetaMask private key
-# Usage: python get_pubkey.py
-# Install first: pip install eth-keys
+import os, sys
 
-from eth_keys import keys
+def main():
+    raw = os.environ.get("DEPLOYER_PRIVATE_KEY", "").strip()
+    if not raw:
+        print("[ERROR] DEPLOYER_PRIVATE_KEY is not set.")
+        sys.exit(1)
+    hex_key = raw.lstrip("0x").lstrip("0X")
+    if len(hex_key) != 64:
+        print(f"[ERROR] Key must be 64 hex chars (got {len(hex_key)}).")
+        sys.exit(1)
+    try:
+        private_key_bytes = bytes.fromhex(hex_key)
+    except ValueError:
+        print("[ERROR] Key contains non-hex characters.")
+        sys.exit(1)
+    try:
+        from eth_keys import keys
+    except ImportError:
+        print("[ERROR] Run: python -m pip install eth-keys")
+        sys.exit(1)
+    pk = keys.PrivateKey(private_key_bytes)
+    addr = pk.public_key.to_checksum_address()
+    pub  = pk.public_key.to_hex()
+    print("Wallet Address:", addr)
+    print("DID:           ", f"did:ethr:{addr}")
+    print("Public Key:    ", pub)
 
-# Paste your MetaMask private key here (without 0x prefix)
-PRIVATE_KEY_HEX = "privte key "
-
-private_key_bytes = bytes.fromhex(PRIVATE_KEY_HEX)
-pk = keys.PrivateKey(private_key_bytes)
-
-wallet_address = pk.public_key.to_checksum_address()
-public_key_hex = pk.public_key.to_hex()
-
-print("=" * 60)
-print("Wallet Address:", wallet_address)
-print("Your DID:      ", f"did:ethr:{wallet_address}")
-print("Public Key:    ", public_key_hex)
-print("=" * 60)
-print("\nPaste these into your .env and Register form:")
-print(f"  DID:          did:ethr:{wallet_address}")
-print(f"  Wallet Addr:  {wallet_address}")
-print(f"  Public Key:   {public_key_hex}")
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,113 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\Rsmal\\Desktop\\Semester Project - SecureVerse\\SecureVerse\\backend\\contracts\\AuditLog.sol": {
+      "lastModificationDate": 1776267664370,
+      "contentHash": "7601d0d2a29d936d5c14e947df69a1a7",
+      "sourceName": "contracts/AuditLog.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "AuditLog"
+      ]
+    },
+    "C:\\Users\\Rsmal\\Desktop\\Semester Project - SecureVerse\\SecureVerse\\backend\\contracts\\DIDRegistry.sol": {
+      "lastModificationDate": 1777824711283,
+      "contentHash": "b2982c4d8849cdcd1994021fa61cecc4",
+      "sourceName": "contracts/DIDRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "DIDRegistry"
+      ]
+    },
+    "C:\\Users\\Rsmal\\Desktop\\Semester Project - SecureVerse\\SecureVerse\\backend\\contracts\\RBACManager.sol": {
+      "lastModificationDate": 1776267652013,
+      "contentHash": "a33777e0430381469328392254ef34f2",
+      "sourceName": "contracts/RBACManager.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "RBACManager"
+      ]
+    }
+  }
+}
