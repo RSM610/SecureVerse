@@ -5,6 +5,72 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import BubbleBackground from '../components/BubbleBackground'
 
+// ── Ethereum personal_sign (matches eth_account.recover_message on the backend) ──
+// Backend uses: encode_defunct(primitive=challenge) then recover_message(msg, signature=...)
+// That's the standard Ethereum "personal sign" / EIP-191 prefix approach.
+
+async function importPrivateKey(hexKey) {
+  // Strip 0x prefix
+  const clean = hexKey.startsWith('0x') || hexKey.startsWith('0X')
+    ? hexKey.slice(2)
+    : hexKey
+
+  if (clean.length !== 64) throw new Error('Private key must be 32 bytes (64 hex chars)')
+
+  const keyBytes = hexToBytes(clean)
+  return keyBytes
+}
+
+function hexToBytes(hex) {
+  const bytes = new Uint8Array(hex.length / 2)
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16)
+  }
+  return bytes
+}
+
+function bytesToHex(bytes) {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+// Ethereum personal_sign: keccak256("\x19Ethereum Signed Message:\n" + len + message)
+// We need to implement this without ethers to keep bundle small.
+// We'll use the SubtleCrypto API for SHA-256, but Ethereum uses keccak256.
+// Best approach: use a small inline keccak implementation or import from a CDN.
+// Since this project already has no ethers dep in frontend, we'll do the signing
+// by calling the backend challenge endpoint differently — but actually the cleanest
+// fix is to use the secp256k1 library that's already available via tweetnacl won't work
+// for secp256k1. Let's use noble/secp256k1 via dynamic import from esm.sh
+
+async function signChallenge(privateKeyHex, challengeHex) {
+  // Dynamically import noble/secp256k1 (small, no bundler needed at runtime)
+  const { secp256k1 } = await import('https://esm.sh/@noble/curves@1.2.0/secp256k1')
+  const { keccak_256 } = await import('https://esm.sh/@noble/hashes@1.3.2/sha3')
+
+  const privKeyBytes = hexToBytes(
+    privateKeyHex.startsWith('0x') ? privateKeyHex.slice(2) : privateKeyHex
+  )
+  const challengeBytes = hexToBytes(challengeHex)
+
+  // Ethereum personal_sign prefix: "\x19Ethereum Signed Message:\n32"
+  const prefix = new TextEncoder().encode('\x19Ethereum Signed Message:\n32')
+  const prefixed = new Uint8Array(prefix.length + challengeBytes.length)
+  prefixed.set(prefix)
+  prefixed.set(challengeBytes, prefix.length)
+
+  const msgHash = keccak_256(prefixed)
+
+  // Sign with secp256k1 (deterministic, returns {r, s, recovery})
+  const sig = secp256k1.sign(msgHash, privKeyBytes)
+
+  // Build 65-byte signature: r (32) + s (32) + v (1, where v = recovery + 27)
+  const rBytes = sig.r.toString(16).padStart(64, '0')
+  const sBytes = sig.s.toString(16).padStart(64, '0')
+  const v = (sig.recovery + 27).toString(16).padStart(2, '0')
+
+  return rBytes + sBytes + v
+}
+
 export default function LoginPage() {
   const navigate    = useNavigate()
   const loginStore  = useAuthStore(s => s.login)
@@ -17,7 +83,6 @@ export default function LoginPage() {
   const [error,   setError]   = useState('')
 
   const refs = useRef([])
-
   const totpStr = totp.join('')
 
   const handleDigit = (i, val) => {
@@ -39,20 +104,37 @@ export default function LoginPage() {
     e.preventDefault()
     if (totpStr.length !== 6) { setError('Enter all 6 TOTP digits'); return }
     setError(''); setLoading(true)
+
     try {
+      // 1. Generate a 32-byte random challenge
       const challenge    = crypto.getRandomValues(new Uint8Array(32))
-      const challengeHex = Array.from(challenge).map(b => b.toString(16).padStart(2,'0')).join('')
-      const { data }     = await api.post('/auth/login', {
+      const challengeHex = bytesToHex(challenge)
+
+      // 2. Sign the challenge with the private key (Ethereum personal_sign style)
+      let signatureHex
+      try {
+        signatureHex = await signChallenge(pk, challengeHex)
+      } catch (sigErr) {
+        setError(`Signing error: ${sigErr.message}. Check your private key format (64 hex chars).`)
+        setLoading(false)
+        return
+      }
+
+      // 3. Submit to backend
+      const { data } = await api.post('/auth/login', {
         did,
         challenge_hex: challengeHex,
-        signature_hex: pk.startsWith('0x') ? pk.slice(2) : pk,
+        signature_hex: signatureHex,
         totp_code: totpStr,
       })
-      loginStore(data.access_token, data.did, data.role)
+
+      loginStore(data.access_token, data.refresh_token, data.did, data.role)
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.detail || 'Authentication failed.')
-    } finally { setLoading(false) }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const digitStyle = (filled) => ({
@@ -97,29 +179,42 @@ export default function LoginPage() {
             {/* DID */}
             <div style={{ marginBottom: 14 }}>
               <label className="field-label">Your DID</label>
-              <input className="input-field mono" placeholder="did:ethr:0x..." value={did} onChange={e => setDid(e.target.value)} required />
+              <input
+                className="input-field mono"
+                placeholder="did:ethr:0x..."
+                value={did}
+                onChange={e => setDid(e.target.value)}
+                required
+              />
             </div>
 
             {/* Private Key */}
             <div style={{ marginBottom: 20 }}>
-              <label className="field-label">Private Key</label>
+              <label className="field-label">Private Key (hex, 64 chars)</label>
               <div style={{ position: 'relative' }}>
                 <input
                   className="input-field mono"
                   type={showPk ? 'text' : 'password'}
-                  placeholder="0x..."
+                  placeholder="0x... or raw 64-char hex"
                   value={pk}
                   onChange={e => setPk(e.target.value)}
                   style={{ paddingRight: 42 }}
                   required
                 />
-                <button type="button" onClick={() => setShowPk(v => !v)} style={{
-                  position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-                  background: 'none', border: 'none', cursor: 'pointer', color: '#334155', padding: 4,
-                }}>
+                <button
+                  type="button"
+                  onClick={() => setShowPk(v => !v)}
+                  style={{
+                    position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', color: '#334155', padding: 4,
+                  }}
+                >
                   {showPk ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
+              <p style={{ fontSize: 10, color: '#1e293b', marginTop: 5 }}>
+                Used client-side only to sign the challenge — never sent to the server.
+              </p>
             </div>
 
             {/* TOTP digits */}
@@ -140,11 +235,20 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {error && <div className="alert alert-error" style={{ marginBottom: 14 }}>{error}</div>}
+            {error && (
+              <div className="alert alert-error" style={{ marginBottom: 14 }}>
+                {error}
+              </div>
+            )}
 
-            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: 13, fontSize: 15 }} disabled={loading}>
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ width: '100%', justifyContent: 'center', padding: 13, fontSize: 15 }}
+              disabled={loading}
+            >
               {loading
-                ? <><div className="spinner" /> Authenticating…</>
+                ? <><div className="spinner" /> Signing & authenticating…</>
                 : <>Sign In <ArrowRight size={15} /></>}
             </button>
           </form>
