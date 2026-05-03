@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #060a12;
+  color: #e2e8f0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 24px; border-radius: 12px;
+  background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+  color: white; font-size: 14px; font-weight: 700;
+  border: none; cursor: pointer; transition: all 0.2s;
+  letter-spacing: 0.02em; font-family: inherit;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.38; cursor: not-allowed; transform: none; }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px 18px; border-radius: 10px;
+  background: transparent; border: 1px solid rgba(255,255,255,0.09);
+  color: #94a3b8; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.18s; font-family: inherit;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.18); color: #e2e8f0; background: rgba(255,255,255,0.04); }
+
+/* ── INPUTS ── */
+.input-field {
+  width: 100%; padding: 11px 15px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 11px; color: #e2e8f0;
+  font-size: 14px; font-family: inherit; outline: none;
+  transition: border-color 0.18s;
+}
+.input-field:focus {
+  border-color: rgba(14,165,233,0.55);
+  box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
+}
+.input-field::placeholder { color: #1e293b; }
+.input-field.mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+textarea.input-field { resize: vertical; min-height: 96px; }
+
+.field-label {
+  display: block; font-size: 10px; font-weight: 700;
+  color: #334155; text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 20px;
+  backdrop-filter: blur(10px);
+}
+.card-hover { transition: all 0.18s; }
+.card-hover:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.13);
+}
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 9px;
+  font-size: 10px; font-weight: 700;
+}
+.badge-cyan   { background: rgba(14,165,233,0.12);  color: #38bdf8; border: 1px solid rgba(14,165,233,0.25); }
+.badge-green  { background: rgba(16,185,129,0.12);  color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+.badge-amber  { background: rgba(245,158,11,0.12);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+.badge-red    { background: rgba(239,68,68,0.12);   color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+
+/* ── ALERTS ── */
+.alert {
+  padding: 11px 15px; border-radius: 11px;
+  font-size: 12px; display: flex; align-items: flex-start; gap: 9px;
+  line-height: 1.5;
+}
+.alert-error   { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.2);  color: #f87171; }
+.alert-success { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); color: #34d399; }
+.alert-info    { background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.2); color: #38bdf8; }
+
+/* ── LAYOUT ── */
+.page-container { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+.page-title {
+  font-size: 26px; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 4px;
+  background: linear-gradient(90deg, #f1f5f9, #7dd3fc);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.page-sub { font-size: 12px; color: #334155; margin-bottom: 26px; }
+.section-label {
+  font-size: 10px; font-weight: 700; color: #1e293b;
+  text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 11px;
+}
+
+/* ── SPINNER ── */
+.spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: #0ea5e9;
+  animation: spin 0.65s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex; align-items: center; gap: 11px;
+  color: #1e293b; font-size: 11px; margin: 14px 0;
+}
+.divider::before,.divider::after {
+  content:''; flex:1; height:1px; background: rgba(255,255,255,0.06);
+}

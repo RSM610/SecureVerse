@@ -1,1 +1,11 @@
 backend/.env.example
+venv/
+backend/venv/
+node_modules/
+frontend/node_modules/
+.env
+private.pem
+__pycache__/
+*.pyc
+dist/
+build/
