@@ -104,4 +104,4 @@ async def me(creds: HTTPAuthorizationCredentials = Security(bearer),
     result = await session.execute(select(User).where(User.did == claims["sub"]))
     user = result.scalar_one_or_none()
     if not user: raise HTTPException(404, "User not found")
-    return MeResponse(did=user.did, role=user.role, created_at=user.created_at.isoformat())s
+    return MeResponse(did=user.did, role=user.role, created_at=user.created_at.isoformat())

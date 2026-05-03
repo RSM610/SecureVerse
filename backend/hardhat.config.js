@@ -1,8 +1,23 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
 
-// FILL THESE IN — never commit real values to GitHub
-const INFURA_KEY  = "YOUR_32_CHAR_INFURA_KEY";       // from infura.io
-const PRIVATE_KEY = "YOUR_PRIVATE_KEY_WITHOUT_0x";   // from MetaMask (no 0x prefix)
+const INFURA_PROJECT_ID    = process.env.INFURA_PROJECT_ID;
+const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
+
+// Conditional network: only add sepolia if both vars are present and valid
+const networks = {
+  hardhat: {},
+};
+
+if (INFURA_PROJECT_ID && DEPLOYER_PRIVATE_KEY && DEPLOYER_PRIVATE_KEY.length === 64) {
+  networks.sepolia = {
+    url: `https://sepolia.infura.io/v3/${INFURA_PROJECT_ID}`,
+    accounts: [`0x${DEPLOYER_PRIVATE_KEY}`],
+    chainId: 11155111,
+  };
+} else {
+  console.warn("⚠️  Sepolia network disabled: missing or invalid INFURA_PROJECT_ID / DEPLOYER_PRIVATE_KEY");
+}
 
 module.exports = {
   solidity: {
@@ -11,13 +26,7 @@ module.exports = {
       optimizer: { enabled: true, runs: 200 },
     },
   },
-  networks: {
-    sepolia: {
-      url: `https://sepolia.infura.io/v3/${INFURA_KEY}`,
-      accounts: [PRIVATE_KEY],
-      chainId: 11155111,
-    },
-  },
+  networks,
   paths: {
     sources:   "./contracts",
     tests:     "./test",

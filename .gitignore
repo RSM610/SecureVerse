@@ -9,3 +9,14 @@ __pycache__/
 *.pyc
 dist/
 build/
+.env
+*.pem
+private.pem
+public.pem
+deployed-addresses.json
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+venv/
+.venv/

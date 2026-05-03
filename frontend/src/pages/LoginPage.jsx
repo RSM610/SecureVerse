@@ -48,7 +48,7 @@ export default function LoginPage() {
         signature_hex: pk.startsWith('0x') ? pk.slice(2) : pk,
         totp_code: totpStr,
       })
-      loginStore(data.access_token, data.refresh_token, data.did, data.role)
+      loginStore(data.access_token, data.did, data.role)
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.detail || 'Authentication failed.')
