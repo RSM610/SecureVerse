@@ -24,3 +24,5 @@ frontend/eslint.config.js
 ~$cureVerse_Deliverable1.docx
 frontend/node_modules/.package-lock.json
 frontend/package-lock.json
+frontend/node_modules/.vite/deps/_metadata.json
+/frontend/node_modules
