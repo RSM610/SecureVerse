@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { FileText, ShieldCheck, RefreshCw, Search } from 'lucide-react'
+import { ShieldCheck, RefreshCw, Search } from 'lucide-react'
 import Layout from '../components/Layout'
 import AuditRow from '../components/AuditRow'
 import { useAuthStore } from '../store/authStore'

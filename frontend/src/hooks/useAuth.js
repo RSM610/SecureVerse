@@ -10,7 +10,7 @@ export function useAuth() {
   const logout = useCallback(async () => {
     try {
       if (store.token) await api.post('/auth/logout', { token: store.token })
-    } catch {}
+    } catch { /* ignore logout errors */ }
     store.logout()
     navigate('/login')
   }, [store, navigate])

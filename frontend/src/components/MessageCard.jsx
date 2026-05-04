@@ -1,5 +1,14 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import { Lock, ChevronDown, ChevronUp, Shield } from 'lucide-react'
+
+MessageCard.propTypes = {
+  msg: PropTypes.shape({
+    ciphertext_b64: PropTypes.string.isRequired,
+    sender_did:     PropTypes.string.isRequired,
+    nonce_b64:      PropTypes.string,
+  }).isRequired,
+}
 
 export default function MessageCard({ msg }) {
   const [open, setOpen] = useState(false)

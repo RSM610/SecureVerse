@@ -1,5 +1,16 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import { X, Copy, Check, Smartphone } from 'lucide-react'
+
+QRModal.propTypes = {
+  qrBase64: PropTypes.string,
+  totpUri:  PropTypes.string.isRequired,
+  onClose:  PropTypes.func.isRequired,
+}
+
+QRModal.defaultProps = {
+  qrBase64: null,
+}
 
 export default function QRModal({ qrBase64, totpUri, onClose }) {
   const [copied, setCopied] = useState(false)
@@ -45,7 +56,7 @@ export default function QRModal({ qrBase64, totpUri, onClose }) {
           {copied ? 'Copied!' : 'Copy setup URI'}
         </button>
         <button onClick={onClose} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-          Done — I've scanned it
+          Done &mdash; I&apos;ve scanned it
         </button>
       </div>
     </div>

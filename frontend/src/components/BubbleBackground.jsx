@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
+import PropTypes from 'prop-types'
 
 const BUBBLE_COLORS = [
   [14,  165, 233],   // sky-500
@@ -138,4 +139,12 @@ export default function BubbleBackground({ count = 18 }) {
       style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}
     />
   )
+}
+
+BubbleBackground.propTypes = {
+  count: PropTypes.number,
+}
+
+BubbleBackground.defaultProps = {
+  count: 18,
 }

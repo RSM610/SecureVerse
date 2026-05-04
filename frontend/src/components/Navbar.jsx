@@ -16,7 +16,7 @@ export default function Navbar() {
   const { pathname } = useLocation()
 
   const handleLogout = async () => {
-    try { await api.post('/auth/logout', { token }) } catch {}
+    try { await api.post('/auth/logout', { token }) } catch { /* ignore logout errors */ }
     logout()
     navigate('/login')
   }

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { LogIn, Lock, Send, UserPlus, ShieldCheck } from 'lucide-react'
 
 const ACTIONS = {
@@ -36,4 +37,13 @@ export default function AuditRow({ entry }) {
       </td>
     </tr>
   )
+}
+
+AuditRow.propTypes = {
+  entry: PropTypes.shape({
+    action:     PropTypes.string.isRequired,
+    user_did:   PropTypes.string.isRequired,
+    timestamp:  PropTypes.string.isRequired,
+    hmac_chain: PropTypes.string.isRequired,
+  }).isRequired,
 }

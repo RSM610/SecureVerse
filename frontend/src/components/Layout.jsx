@@ -1,6 +1,11 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Navbar from './Navbar'
 import BubbleBackground from './BubbleBackground'
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+}
 
 export default function Layout({ children }) {
   return (

@@ -9,18 +9,6 @@ import BubbleBackground from '../components/BubbleBackground'
 // Backend uses: encode_defunct(primitive=challenge) then recover_message(msg, signature=...)
 // That's the standard Ethereum "personal sign" / EIP-191 prefix approach.
 
-async function importPrivateKey(hexKey) {
-  // Strip 0x prefix
-  const clean = hexKey.startsWith('0x') || hexKey.startsWith('0X')
-    ? hexKey.slice(2)
-    : hexKey
-
-  if (clean.length !== 64) throw new Error('Private key must be 32 bytes (64 hex chars)')
-
-  const keyBytes = hexToBytes(clean)
-  return keyBytes
-}
-
 function hexToBytes(hex) {
   const bytes = new Uint8Array(hex.length / 2)
   for (let i = 0; i < hex.length; i += 2) {
