@@ -20,3 +20,7 @@ __pycache__/
 .coverage
 venv/
 .venv/
+frontend/eslint.config.js
+~$cureVerse_Deliverable1.docx
+frontend/node_modules/.package-lock.json
+frontend/package-lock.json
